@@ -1,0 +1,15 @@
+# Railway Deployment Commands
+
+## Fix psycopg2 Missing Error
+
+### Commands to run in Command Prompt (cmd.exe):
+cd "C:\Users\Aadish\py\Londons Kitchen project"
+git add requirements.txt
+git commit -m "Add psycopg2-binary for PostgreSQL support"
+git push
+
+### Alternative - Manual Railway Steps:
+1. Go to https://railway.app
+2. Open your London's Kitchen project
+3. Go to Deploy tab
+4. Click "Redeploy"
