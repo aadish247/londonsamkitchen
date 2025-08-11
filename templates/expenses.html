@@ -285,7 +285,9 @@
                 document.getElementById('edit-description').value = data.description;
                 document.getElementById('edit-amount').value = data.amount;
                 document.getElementById('edit-category').value = data.category;
-                document.getElementById('edit-date').value = data.date;
+                // Ensure date is properly formatted for HTML5 date input
+                const dateValue = data.date || new Date().toISOString().split('T')[0];
+                document.getElementById('edit-date').value = dateValue;
                 showModal('edit-expense-modal');
             })
             .catch(error => {

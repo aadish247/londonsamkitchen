@@ -237,7 +237,9 @@
                 document.getElementById('edit-investment-id').value = investmentId;
                 document.getElementById('edit-investor-name').value = data.investor_name;
                 document.getElementById('edit-amount').value = data.amount;
-                document.getElementById('edit-date').value = data.date;
+                // Ensure date is properly formatted for HTML5 date input
+                const dateValue = data.date || new Date().toISOString().split('T')[0];
+                document.getElementById('edit-date').value = dateValue;
                 showModal('edit-investment-modal');
             })
             .catch(error => {

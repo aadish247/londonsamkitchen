@@ -230,7 +230,9 @@
                 document.getElementById('edit-sale-id').value = saleId;
                 document.getElementById('edit-sale-amount').value = data.amount;
                 document.getElementById('edit-sale-description').value = data.description || '';
-                document.getElementById('edit-sale-date').value = data.date;
+                // Ensure date is properly formatted for HTML5 date input
+                const dateValue = data.date || new Date().toISOString().split('T')[0];
+                document.getElementById('edit-sale-date').value = dateValue;
                 showModal('edit-sale-modal');
             })
             .catch(error => {
