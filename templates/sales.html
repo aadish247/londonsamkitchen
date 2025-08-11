@@ -1,0 +1,293 @@
+{% extends "base.html" %}
+
+{% block title %}Sales - London's Kitchen{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h1><i class="fas fa-shopping-cart"></i> Sales</h1>
+    <p class="page-subtitle">Track your revenue and sales performance</p>
+</div>
+
+<div class="content-grid">
+    <!-- Add Sale Form -->
+    <div class="form-container">
+        <div class="form-header">
+            <h2><i class="fas fa-plus-circle"></i> Record New Sale</h2>
+            <p>Add sales transactions to track revenue</p>
+        </div>
+
+        <form id="sale-form" class="modern-form">
+            <div class="form-grid">
+                <div class="form-group">
+                    <label for="amount">
+                        <i class="fas fa-pound-sign"></i>
+                        Sale Amount (£)
+                    </label>
+                    <input type="number" id="amount" name="amount" step="0.01" placeholder="0.00" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="description">
+                        <i class="fas fa-align-left"></i>
+                        Description (Optional)
+                    </label>
+                    <input type="text" id="description" name="description"
+                        placeholder="e.g., Daily sales, Catering order">
+                </div>
+
+                <div class="form-group">
+                    <label for="date">
+                        <i class="fas fa-calendar"></i>
+                        Date
+                    </label>
+                    <input type="date" id="date" name="date" required>
+                </div>
+            </div>
+
+            <button type="submit" class="btn btn-success btn-large">
+                <i class="fas fa-shopping-cart"></i>
+                Record Sale
+            </button>
+        </form>
+    </div>
+
+    <!-- Sales Records -->
+    <div class="records-container">
+        <div class="records-header">
+            <h2><i class="fas fa-list"></i> Sales Records</h2>
+            <div class="stats-badge success">
+                <i class="fas fa-pound-sign"></i>
+                Total: £{{ "%.2f"|format(total) }}
+            </div>
+        </div>
+
+        {% if sales %}
+        <div class="table-container">
+            <table class="modern-table">
+                <thead>
+                    <tr>
+                        <th><i class="fas fa-calendar"></i> Date</th>
+                        <th><i class="fas fa-align-left"></i> Description</th>
+                        <th><i class="fas fa-pound-sign"></i> Amount</th>
+                        <th><i class="fas fa-cog"></i> Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for sale in sales %}
+                    <tr>
+                        <td>
+                            <span class="date-badge">{{ sale.date.strftime('%d %b %Y') }}</span>
+                        </td>
+                        <td class="description-cell">
+                            {{ sale.description or 'N/A' }}
+                        </td>
+                        <td class="amount-cell success">£{{ "%.2f"|format(sale.amount) }}</td>
+                        <td>
+                            <button class="btn-icon btn-edit" onclick="editSale({{ sale.id }})" title="Edit">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <button class="btn-icon btn-delete" onclick="deleteEntry('sale', {{ sale.id }})"
+                                title="Delete">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <div class="empty-state">
+            <i class="fas fa-shopping-cart"></i>
+            <h3>No sales recorded yet</h3>
+            <p>Record your first sale using the form above</p>
+        </div>
+        {% endif %}
+    </div>
+</div>
+<!-- Edit Sale Modal -->
+<div id="edit-sale-modal" class="modal edit-modal">
+    <div class="modal-content edit-modal-content">
+        <div class="edit-modal-header">
+            <h2><i class="fas fa-shopping-cart"></i> Edit Sale</h2>
+            <button type="button" class="edit-modal-close" onclick="closeEditModal()">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <form id="edit-sale-form" class="edit-modal-form">
+            <input type="hidden" id="edit-sale-id" name="id">
+
+            <div class="edit-form-group">
+                <label for="edit-sale-amount" class="edit-form-label">
+                    <i class="fas fa-pound-sign"></i>
+                    Sale Amount
+                </label>
+                <div class="currency-input-wrapper">
+                    <span class="currency-symbol">£</span>
+                    <input type="number" id="edit-sale-amount" name="amount" class="edit-form-input currency-input"
+                        step="0.01" min="0" required>
+                </div>
+            </div>
+
+            <div class="edit-form-group">
+                <label for="edit-sale-description" class="edit-form-label">
+                    <i class="fas fa-align-left"></i>
+                    Description (Optional)
+                </label>
+                <input type="text" id="edit-sale-description" name="description" class="edit-form-input">
+            </div>
+
+            <div class="edit-form-group">
+                <label for="edit-sale-date" class="edit-form-label">
+                    <i class="fas fa-calendar"></i>
+                    Date
+                </label>
+                <input type="date" id="edit-sale-date" name="date" class="edit-form-input" required>
+            </div>
+
+            <div class="edit-modal-actions">
+                <button type="button" class="edit-btn edit-btn-secondary" onclick="closeEditModal()">
+                    <i class="fas fa-times"></i>
+                    Cancel
+                </button>
+                <button type="submit" class="edit-btn edit-btn-success">
+                    <i class="fas fa-save"></i>
+                    Update Sale
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+<script>
+    document.getElementById('sale-form').addEventListener('submit', async (e) => {
+        e.preventDefault();
+
+        const submitBtn = e.target.querySelector('.btn-success');
+        const originalText = submitBtn.innerHTML;
+        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Recording...';
+        submitBtn.disabled = true;
+
+        const formData = {
+            amount: document.getElementById('amount').value,
+            description: document.getElementById('description').value || '',
+            date: document.getElementById('date').value
+        };
+
+        try {
+            const response = await fetch('/add_sale', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(formData)
+            });
+
+            if (response.ok) {
+                location.reload();
+            } else {
+                const error = await response.json();
+                alert(error.message || 'Error adding sale');
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            alert('Error adding sale');
+        } finally {
+            submitBtn.innerHTML = originalText;
+            submitBtn.disabled = false;
+        }
+    });
+
+    // Set today's date as default
+    document.getElementById('date').valueAsDate = new Date();
+
+    // Show modal with animation
+    function showModal(modalId) {
+        const modal = document.getElementById(modalId);
+        modal.style.display = 'block';
+        // Trigger reflow
+        modal.offsetHeight;
+        modal.classList.add('show');
+    }
+
+    // Hide modal with animation
+    function hideModal(modalId) {
+        const modal = document.getElementById(modalId);
+        modal.classList.remove('show');
+        setTimeout(() => {
+            modal.style.display = 'none';
+        }, 300); // Match the transition duration
+    }
+
+    // Edit Sale Functions
+    function editSale(saleId) {
+        fetch(`/edit_sale/${saleId}`)
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('edit-sale-id').value = saleId;
+                document.getElementById('edit-sale-amount').value = data.amount;
+                document.getElementById('edit-sale-description').value = data.description || '';
+                document.getElementById('edit-sale-date').value = data.date;
+                showModal('edit-sale-modal');
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Error loading sale data');
+            });
+    }
+
+    function closeEditModal() {
+        hideModal('edit-sale-modal');
+    }
+
+    document.getElementById('edit-sale-form').addEventListener('submit', async (e) => {
+        e.preventDefault();
+
+        const saleId = document.getElementById('edit-sale-id').value;
+        const formData = {
+            amount: document.getElementById('edit-sale-amount').value,
+            description: document.getElementById('edit-sale-description').value || '',
+            date: document.getElementById('edit-sale-date').value
+        };
+
+        const submitBtn = e.target.querySelector('.btn-success');
+        const originalText = submitBtn.innerHTML;
+        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Updating...';
+        submitBtn.disabled = true;
+
+        try {
+            const response = await fetch(`/edit_sale/${saleId}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(formData)
+            });
+
+            if (response.ok) {
+                location.reload();
+            } else {
+                const error = await response.json();
+                alert(error.message || 'Error updating sale');
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            alert('Error updating sale');
+        } finally {
+            submitBtn.innerHTML = originalText;
+            submitBtn.disabled = false;
+        }
+    });
+
+    // Close modal when clicking outside
+    window.onclick = function (event) {
+        const modal = document.getElementById('edit-sale-modal');
+        if (event.target === modal) {
+            closeEditModal();
+        }
+    }
+</script>
+{% endblock %}

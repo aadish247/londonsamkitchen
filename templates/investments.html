@@ -1,0 +1,300 @@
+{% extends "base.html" %}
+
+{% block title %}Investments - London's Kitchen{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h1><i class="fas fa-chart-line"></i> Investments</h1>
+    <p class="page-subtitle">Track your investments and funding</p>
+</div>
+
+<div class="content-grid">
+    <!-- Add Investment Form -->
+    <div class="form-container">
+        <div class="form-header">
+            <h2><i class="fas fa-plus-circle"></i> Add New Investment</h2>
+            <p>Record investments from investors</p>
+        </div>
+
+        <form id="investment-form" class="modern-form">
+            <div class="form-grid">
+                <div class="form-group">
+                    <label for="investor-name">
+                        <i class="fas fa-user"></i>
+                        Investor Name
+                    </label>
+                    <select id="investor-name" name="investor_name" required>
+                        <option value="">Select investor</option>
+                        <option value="Adwait">Adwait</option>
+                        <option value="Shree">Shree</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="amount">
+                        <i class="fas fa-pound-sign"></i>
+                        Investment Amount (£)
+                    </label>
+                    <input type="number" id="amount" name="amount" step="0.01" placeholder="0.00" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="date">
+                        <i class="fas fa-calendar"></i>
+                        Date
+                    </label>
+                    <input type="date" id="date" name="date" required>
+                </div>
+            </div>
+
+            <button type="submit" class="btn btn-success btn-large">
+                <i class="fas fa-plus"></i>
+                Add Investment
+            </button>
+        </form>
+    </div>
+
+    <!-- Investments Records -->
+    <div class="records-container">
+        <div class="records-header">
+            <h2><i class="fas fa-list"></i> Investment Records</h2>
+            <div class="stats-badge info">
+                <i class="fas fa-pound-sign"></i>
+                Total: £{{ "%.2f"|format(total) }}
+            </div>
+        </div>
+
+        {% if investments %}
+        <div class="table-container">
+            <table class="modern-table">
+                <thead>
+                    <tr>
+                        <th><i class="fas fa-calendar"></i> Date</th>
+                        <th><i class="fas fa-user"></i> Investor</th>
+                        <th><i class="fas fa-pound-sign"></i> Amount</th>
+                        <th><i class="fas fa-cog"></i> Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for investment in investments %}
+                    <tr>
+                        <td>
+                            <span class="date-badge">{{ investment.date.strftime('%d %b %Y') }}</span>
+                        </td>
+                        <td class="investor-cell">{{ investment.investor_name }}</td>
+                        <td class="amount-cell info">£{{ "%.2f"|format(investment.amount) }}</td>
+                        <td>
+                            <button class="btn-icon btn-edit" onclick="editInvestment({{ investment.id }})"
+                                title="Edit">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <button class="btn-icon btn-delete" onclick="deleteEntry('investment', {{ investment.id }})"
+                                title="Delete">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <div class="empty-state">
+            <i class="fas fa-chart-line"></i>
+            <h3>No investments recorded yet</h3>
+            <p>Add your first investment using the form above</p>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+<!-- Edit Investment Modal -->
+<div id="edit-investment-modal" class="modal edit-modal">
+    <div class="modal-content edit-modal-content">
+        <div class="edit-modal-header">
+            <h2><i class="fas fa-chart-line"></i> Edit Investment</h2>
+            <button type="button" class="edit-modal-close" onclick="closeEditModal()">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <form id="edit-investment-form" class="edit-modal-form">
+            <input type="hidden" id="edit-investment-id" name="id">
+
+            <div class="edit-form-group">
+                <label for="edit-investor-name" class="edit-form-label">
+                    <i class="fas fa-user"></i>
+                    Investor Name
+                </label>
+                <select id="edit-investor-name" name="investor_name" class="edit-form-select" required>
+                    <option value="">Select investor</option>
+                    <option value="Adwait">Adwait</option>
+                    <option value="Shree">Shree</option>
+                </select>
+            </div>
+
+            <div class="edit-form-group">
+                <label for="edit-amount" class="edit-form-label">
+                    <i class="fas fa-pound-sign"></i>
+                    Investment Amount
+                </label>
+                <div class="currency-input-wrapper">
+                    <span class="currency-symbol">£</span>
+                    <input type="number" id="edit-amount" name="amount" class="edit-form-input currency-input"
+                        step="0.01" min="0" required>
+                </div>
+            </div>
+
+            <div class="edit-form-group">
+                <label for="edit-date" class="edit-form-label">
+                    <i class="fas fa-calendar"></i>
+                    Date
+                </label>
+                <input type="date" id="edit-date" name="date" class="edit-form-input" required>
+            </div>
+
+            <div class="edit-modal-actions">
+                <button type="button" class="edit-btn edit-btn-secondary" onclick="closeEditModal()">
+                    <i class="fas fa-times"></i>
+                    Cancel
+                </button>
+                <button type="submit" class="edit-btn edit-btn-success">
+                    <i class="fas fa-save"></i>
+                    Update Investment
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+<script>
+    document.getElementById('investment-form').addEventListener('submit', async (e) => {
+        e.preventDefault();
+
+        const submitBtn = e.target.querySelector('.btn-success');
+        const originalText = submitBtn.innerHTML;
+        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Adding...';
+        submitBtn.disabled = true;
+
+        const formData = {
+            investor_name: document.getElementById('investor-name').value,
+            amount: document.getElementById('amount').value,
+            date: document.getElementById('date').value
+        };
+
+        try {
+            const response = await fetch('/add_investment', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(formData)
+            });
+
+            if (response.ok) {
+                location.reload();
+            } else {
+                const error = await response.json();
+                alert(error.message || 'Error adding investment');
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            alert('Error adding investment');
+        } finally {
+            submitBtn.innerHTML = originalText;
+            submitBtn.disabled = false;
+        }
+    });
+
+    // Set today's date as default
+    document.getElementById('date').valueAsDate = new Date();
+
+    // Show modal with animation
+    function showModal(modalId) {
+        const modal = document.getElementById(modalId);
+        modal.style.display = 'block';
+        // Trigger reflow
+        modal.offsetHeight;
+        modal.classList.add('show');
+    }
+
+    // Hide modal with animation
+    function hideModal(modalId) {
+        const modal = document.getElementById(modalId);
+        modal.classList.remove('show');
+        setTimeout(() => {
+            modal.style.display = 'none';
+        }, 300); // Match the transition duration
+    }
+
+    // Edit Investment Functions
+    function editInvestment(investmentId) {
+        fetch(`/edit_investment/${investmentId}`)
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('edit-investment-id').value = investmentId;
+                document.getElementById('edit-investor-name').value = data.investor_name;
+                document.getElementById('edit-amount').value = data.amount;
+                document.getElementById('edit-date').value = data.date;
+                showModal('edit-investment-modal');
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Error loading investment data');
+            });
+    }
+
+    function closeEditModal() {
+        hideModal('edit-investment-modal');
+    }
+
+    document.getElementById('edit-investment-form').addEventListener('submit', async (e) => {
+        e.preventDefault();
+
+        const investmentId = document.getElementById('edit-investment-id').value;
+        const formData = {
+            investor_name: document.getElementById('edit-investor-name').value,
+            amount: document.getElementById('edit-amount').value,
+            date: document.getElementById('edit-date').value
+        };
+
+        const submitBtn = e.target.querySelector('.btn-success');
+        const originalText = submitBtn.innerHTML;
+        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Updating...';
+        submitBtn.disabled = true;
+
+        try {
+            const response = await fetch(`/edit_investment/${investmentId}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(formData)
+            });
+
+            if (response.ok) {
+                location.reload();
+            } else {
+                const error = await response.json();
+                alert(error.message || 'Error updating investment');
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            alert('Error updating investment');
+        } finally {
+            submitBtn.innerHTML = originalText;
+            submitBtn.disabled = false;
+        }
+    });
+
+    // Close modal when clicking outside
+    window.onclick = function (event) {
+        const modal = document.getElementById('edit-investment-modal');
+        if (event.target === modal) {
+            closeEditModal();
+        }
+    }
+</script>
+{% endblock %}

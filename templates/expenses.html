@@ -1,0 +1,349 @@
+{% extends "base.html" %}
+
+{% block title %}Expenses - London's Kitchen{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h1><i class="fas fa-receipt"></i> Expenses</h1>
+    <p class="page-subtitle">Track your business expenses</p>
+</div>
+
+<div class="content-grid">
+    <!-- Add Expense Form -->
+    <div class="form-container">
+        <div class="form-header">
+            <h2><i class="fas fa-plus-circle"></i> Record New Expense</h2>
+            <p>Add business expenses to track spending</p>
+        </div>
+
+        <form id="expense-form" class="modern-form">
+            <div class="form-grid">
+                <div class="form-group">
+                    <label for="description">
+                        <i class="fas fa-align-left"></i>
+                        Description
+                    </label>
+                    <input type="text" id="description" name="description" placeholder="Enter expense description"
+                        required>
+                </div>
+
+                <div class="form-group">
+                    <label for="amount">
+                        <i class="fas fa-pound-sign"></i>
+                        Amount (£)
+                    </label>
+                    <input type="number" id="amount" name="amount" step="0.01" placeholder="0.00" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="category">
+                        <i class="fas fa-tag"></i>
+                        Category
+                    </label>
+                    <select id="category" name="category" required>
+                        <option value="">Select category</option>
+                        <option value="Setup Expense">🛠️ Setup Expense</option>
+                        <option value="Monthly Expense">📅 Monthly Expense</option>
+                        <option value="Rent">🏠 Rent</option>
+                        <option value="Salary">💰 Salary</option>
+                        <option value="Supplies">📦 Supplies</option>
+                        <option value="Marketing">📢 Marketing</option>
+                        <option value="Other">📦 Other</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="date">
+                        <i class="fas fa-calendar"></i>
+                        Date
+                    </label>
+                    <input type="date" id="date" name="date" required>
+                </div>
+            </div>
+
+            <button type="submit" class="btn btn-success btn-large">
+                <i class="fas fa-plus"></i>
+                Record Expense
+            </button>
+        </form>
+    </div>
+
+    <!-- Expenses Records -->
+    <div class="records-container">
+        <div class="records-header">
+            <h2><i class="fas fa-list"></i> Expense Records</h2>
+            <div class="stats-badge danger">
+                <i class="fas fa-pound-sign"></i>
+                Total: £{{ "%.2f"|format(total) }}
+            </div>
+        </div>
+
+        {% if expenses %}
+        <div class="table-container">
+            <table class="modern-table">
+                <thead>
+                    <tr>
+                        <th><i class="fas fa-calendar"></i> Date</th>
+                        <th><i class="fas fa-align-left"></i> Description</th>
+                        <th><i class="fas fa-tag"></i> Category</th>
+                        <th><i class="fas fa-pound-sign"></i> Amount</th>
+                        <th><i class="fas fa-cog"></i> Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for expense in expenses %}
+                    <tr>
+                        <td>
+                            <span class="date-badge">{{ expense.date.strftime('%d %b %Y') }}</span>
+                        </td>
+                        <td class="description-cell">{{ expense.description }}</td>
+                        <td>
+                            <span
+                                class="category-badge category-{{ expense.category|lower|replace(' ', '-')|replace('&', '') }}">
+                                {{ expense.category }}
+                            </span>
+                        </td>
+                        <td class="amount-cell danger">£{{ "%.2f"|format(expense.amount) }}</td>
+                        <td>
+                            <button class="btn-icon btn-edit" onclick="editExpense({{ expense.id }})" title="Edit">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <button class="btn-icon btn-delete" onclick="deleteEntry('expense', {{ expense.id }})"
+                                title="Delete">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <div class="empty-state">
+            <i class="fas fa-receipt"></i>
+            <h3>No expenses recorded yet</h3>
+            <p>Record your first expense using the form above</p>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+<!-- Edit Expense Modal -->
+<div id="edit-expense-modal" class="modal">
+    <div class="modal-content enhanced-modal">
+        <div class="modal-header enhanced-header">
+            <div class="header-content">
+                <i class="fas fa-edit"></i>
+                <h2>Edit Expense</h2>
+                <p class="modal-subtitle">Update your expense details</p>
+            </div>
+            <button class="close-btn" onclick="closeEditModal()" aria-label="Close">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <form id="edit-expense-form" class="enhanced-form">
+            <input type="hidden" id="edit-expense-id" name="id">
+
+            <div class="form-section">
+                <div class="form-group enhanced-group">
+                    <label for="edit-description" class="enhanced-label">
+                        <i class="fas fa-align-left"></i>
+                        Description
+                        <span class="required-star">*</span>
+                    </label>
+                    <input type="text" id="edit-description" name="description" class="enhanced-input"
+                        placeholder="Enter expense description" required>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group enhanced-group">
+                        <label for="edit-amount" class="enhanced-label">
+                            <i class="fas fa-pound-sign"></i>
+                            Amount (£)
+                            <span class="required-star">*</span>
+                        </label>
+                        <div class="input-with-icon">
+                            <span class="currency-symbol">£</span>
+                            <input type="number" id="edit-amount" name="amount" class="enhanced-input amount-input"
+                                step="0.01" placeholder="0.00" required>
+                        </div>
+                    </div>
+
+                    <div class="form-group enhanced-group">
+                        <label for="edit-date" class="enhanced-label">
+                            <i class="fas fa-calendar"></i>
+                            Date
+                            <span class="required-star">*</span>
+                        </label>
+                        <input type="date" id="edit-date" name="date" class="enhanced-input" required>
+                    </div>
+                </div>
+
+                <div class="form-group enhanced-group">
+                    <label for="edit-category" class="enhanced-label">
+                        <i class="fas fa-tag"></i>
+                        Category
+                        <span class="required-star">*</span>
+                    </label>
+                    <select id="edit-category" name="category" class="enhanced-select" required>
+                        <option value="">Select category</option>
+                        <option value="Setup Expense">🛠️ Setup Expense</option>
+                        <option value="Monthly Expense">📅 Monthly Expense</option>
+                        <option value="Rent">🏠 Rent</option>
+                        <option value="Salary">💰 Salary</option>
+                        <option value="Supplies">📦 Supplies</option>
+                        <option value="Marketing">📢 Marketing</option>
+                        <option value="Other">📦 Other</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="modal-actions enhanced-actions">
+                <button type="button" class="btn btn-outline" onclick="closeEditModal()">
+                    <i class="fas fa-times"></i>
+                    Cancel
+                </button>
+                <button type="submit" class="btn btn-primary-gradient">
+                    <i class="fas fa-save"></i>
+                    Update Expense
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+<script>
+    document.getElementById('expense-form').addEventListener('submit', async (e) => {
+        e.preventDefault();
+
+        const submitBtn = e.target.querySelector('.btn-success');
+        const originalText = submitBtn.innerHTML;
+        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Recording...';
+        submitBtn.disabled = true;
+
+        const formData = {
+            description: document.getElementById('description').value,
+            amount: document.getElementById('amount').value,
+            category: document.getElementById('category').value,
+            date: document.getElementById('date').value
+        };
+
+        try {
+            const response = await fetch('/add_expense', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(formData)
+            });
+
+            if (response.ok) {
+                location.reload();
+            } else {
+                const error = await response.json();
+                alert(error.message || 'Error adding expense');
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            alert('Error adding expense');
+        } finally {
+            submitBtn.innerHTML = originalText;
+            submitBtn.disabled = false;
+        }
+    });
+
+    // Set today's date as default
+    document.getElementById('date').valueAsDate = new Date();
+
+    // Show modal with animation
+    function showModal(modalId) {
+        const modal = document.getElementById(modalId);
+        modal.style.display = 'block';
+        // Trigger reflow
+        modal.offsetHeight;
+        modal.classList.add('show');
+    }
+
+    // Hide modal with animation
+    function hideModal(modalId) {
+        const modal = document.getElementById(modalId);
+        modal.classList.remove('show');
+        setTimeout(() => {
+            modal.style.display = 'none';
+        }, 300); // Match the transition duration
+    }
+
+    // Edit Expense Functions
+    function editExpense(expenseId) {
+        fetch(`/edit_expense/${expenseId}`)
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('edit-expense-id').value = expenseId;
+                document.getElementById('edit-description').value = data.description;
+                document.getElementById('edit-amount').value = data.amount;
+                document.getElementById('edit-category').value = data.category;
+                document.getElementById('edit-date').value = data.date;
+                showModal('edit-expense-modal');
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Error loading expense data');
+            });
+    }
+
+    function closeEditModal() {
+        hideModal('edit-expense-modal');
+    }
+
+    document.getElementById('edit-expense-form').addEventListener('submit', async (e) => {
+        e.preventDefault();
+
+        const expenseId = document.getElementById('edit-expense-id').value;
+        const formData = {
+            description: document.getElementById('edit-description').value,
+            amount: document.getElementById('edit-amount').value,
+            category: document.getElementById('edit-category').value,
+            date: document.getElementById('edit-date').value
+        };
+
+        const submitBtn = e.target.querySelector('.btn-success');
+        const originalText = submitBtn.innerHTML;
+        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Updating...';
+        submitBtn.disabled = true;
+
+        try {
+            const response = await fetch(`/edit_expense/${expenseId}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(formData)
+            });
+
+            if (response.ok) {
+                location.reload();
+            } else {
+                const error = await response.json();
+                alert(error.message || 'Error updating expense');
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            alert('Error updating expense');
+        } finally {
+            submitBtn.innerHTML = originalText;
+            submitBtn.disabled = false;
+        }
+    });
+
+    // Close modal when clicking outside
+    window.onclick = function (event) {
+        const modal = document.getElementById('edit-expense-modal');
+        if (event.target === modal) {
+            closeEditModal();
+        }
+    }
+</script>
+{% endblock %}

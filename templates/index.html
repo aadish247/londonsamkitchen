@@ -1,0 +1,374 @@
+{% extends "base.html" %}
+
+{% block title %}Home - London's Kitchen{% endblock %}
+
+{% block content %}
+<div class="hero-section">
+    <div class="hero-content">
+        <h1 class="hero-title">
+            <i class="fas fa-utensils"></i>
+            London's Kitchen
+            <span class="hero-subtitle">Financial Management System</span>
+        </h1>
+        <p class="hero-description">
+            Take control of your food truck business finances with our comprehensive 
+            tracking system. Monitor investments, expenses, and sales in real-time.
+        </p>
+        <div class="hero-stats">
+            <div class="hero-stat">
+                <div class="stat-number">£{{ "%.0f"|format(total_investment) }}</div>
+                <div class="stat-label">Total Investment</div>
+            </div>
+            <div class="hero-stat">
+                <div class="stat-number">£{{ "%.0f"|format(total_expenses) }}</div>
+                <div class="stat-label">Total Expenses</div>
+            </div>
+            <div class="hero-stat">
+                <div class="stat-number">£{{ "%.0f"|format(total_sales) }}</div>
+                <div class="stat-label">Total Sales</div>
+            </div>
+        </div>
+    </div>
+    <div class="hero-visual">
+        <div class="floating-card">
+            <i class="fas fa-chart-line"></i>
+            <span>Real-time Analytics</span>
+        </div>
+        <div class="floating-card">
+            <i class="fas fa-mobile-alt"></i>
+            <span>Mobile Friendly</span>
+        </div>
+        <div class="floating-card">
+            <i class="fas fa-shield-alt"></i>
+            <span>Secure & Private</span>
+        </div>
+    </div>
+</div>
+
+<div class="features-section">
+    <h2 class="section-title">Manage Your Business</h2>
+    <div class="features-grid">
+        <a href="/investments" class="feature-card">
+            <div class="feature-icon">
+                <i class="fas fa-pound-sign"></i>
+            </div>
+            <h3>Investments</h3>
+            <p>Track partner investments and capital contributions from Adwait and Shree</p>
+            <div class="feature-stats">
+                <span class="stat">{{ investment_count }} investments</span>
+            </div>
+        </a>
+        
+        <a href="/expenses" class="feature-card">
+            <div class="feature-icon">
+                <i class="fas fa-receipt"></i>
+            </div>
+            <h3>Expenses</h3>
+            <p>Monitor business expenses, categorize costs, and control spending</p>
+            <div class="feature-stats">
+                <span class="stat">{{ expense_count }} expenses</span>
+            </div>
+        </a>
+        
+        <a href="/sales" class="feature-card">
+            <div class="feature-icon">
+                <i class="fas fa-shopping-cart"></i>
+            </div>
+            <h3>Sales</h3>
+            <p>Record daily sales revenue and track business performance</p>
+            <div class="feature-stats">
+                <span class="stat">{{ sale_count }} sales</span>
+            </div>
+        </a>
+        
+        <a href="/dashboard" class="feature-card dashboard-card">
+            <div class="feature-icon">
+                <i class="fas fa-chart-bar"></i>
+            </div>
+            <h3>Dashboard</h3>
+            <p>View comprehensive financial analytics and real-time business insights</p>
+            <div class="feature-stats">
+                <span class="stat">Live analytics</span>
+            </div>
+        </a>
+    </div>
+</div>
+
+<div class="quick-actions">
+    <h3>Quick Actions</h3>
+    <div class="actions-grid">
+        <a href="/investments" class="action-btn">
+            <i class="fas fa-plus"></i>
+            Add Investment
+        </a>
+        <a href="/expenses" class="action-btn">
+            <i class="fas fa-plus"></i>
+            Add Expense
+        </a>
+        <a href="/sales" class="action-btn">
+            <i class="fas fa-plus"></i>
+            Add Sale
+        </a>
+    </div>
+</div>
+
+<style>
+.hero-section {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 60px;
+    align-items: center;
+    padding: 60px 0;
+    margin-bottom: 60px;
+}
+
+.hero-content {
+    text-align: left;
+}
+
+.hero-title {
+    font-size: 3.5em;
+    font-weight: 700;
+    margin-bottom: 20px;
+    color: #2c3e50;
+    line-height: 1.1;
+}
+
+.hero-subtitle {
+    display: block;
+    font-size: 0.4em;
+    font-weight: 400;
+    color: #7f8c8d;
+    margin-top: 10px;
+}
+
+.hero-description {
+    font-size: 1.3em;
+    color: #34495e;
+    margin-bottom: 40px;
+    line-height: 1.6;
+}
+
+.hero-stats {
+    display: flex;
+    gap: 40px;
+    margin-bottom: 40px;
+}
+
+.hero-stat {
+    text-align: center;
+}
+
+.stat-number {
+    font-size: 2.5em;
+    font-weight: 700;
+    color: #667eea;
+    margin-bottom: 5px;
+}
+
+.stat-label {
+    font-size: 0.9em;
+    color: #7f8c8d;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.hero-visual {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    align-items: flex-end;
+}
+
+.floating-card {
+    background: white;
+    padding: 20px 30px;
+    border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    transition: transform 0.3s ease;
+    min-width: 200px;
+}
+
+.floating-card:hover {
+    transform: translateY(-5px);
+}
+
+.floating-card i {
+    font-size: 24px;
+    color: #667eea;
+}
+
+.floating-card span {
+    font-weight: 600;
+    color: #2c3e50;
+}
+
+.features-section {
+    margin-bottom: 60px;
+}
+
+.section-title {
+    text-align: center;
+    font-size: 2.5em;
+    color: #2c3e50;
+    margin-bottom: 50px;
+}
+
+.features-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 30px;
+}
+
+.feature-card {
+    background: white;
+    border-radius: 16px;
+    padding: 40px 30px;
+    text-decoration: none;
+    color: inherit;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.feature-card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+}
+
+.feature-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, #667eea, #764ba2);
+    transform: scaleX(0);
+    transition: transform 0.3s ease;
+}
+
+.feature-card:hover::before {
+    transform: scaleX(1);
+}
+
+.dashboard-card::before {
+    background: linear-gradient(90deg, #4facfe, #00f2fe);
+}
+
+.feature-icon {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 25px;
+    color: white;
+    font-size: 32px;
+}
+
+.dashboard-card .feature-icon {
+    background: linear-gradient(135deg, #4facfe, #00f2fe);
+}
+
+.feature-card h3 {
+    font-size: 1.5em;
+    color: #2c3e50;
+    margin-bottom: 15px;
+    font-weight: 700;
+}
+
+.feature-card p {
+    color: #7f8c8d;
+    line-height: 1.6;
+    margin-bottom: 20px;
+}
+
+.feature-stats {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.feature-stats .stat {
+    font-size: 0.9em;
+    color: #667eea;
+    font-weight: 600;
+}
+
+.quick-actions {
+    text-align: center;
+    margin-bottom: 40px;
+}
+
+.quick-actions h3 {
+    font-size: 1.8em;
+    color: #2c3e50;
+    margin-bottom: 30px;
+}
+
+.actions-grid {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    flex-wrap: wrap;
+}
+
+.action-btn {
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    color: white;
+    padding: 15px 30px;
+    border-radius: 50px;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-weight: 600;
+    transition: transform 0.3s ease;
+}
+
+.action-btn:hover {
+    transform: translateY(-2px);
+    color: white;
+}
+
+@media (max-width: 768px) {
+    .hero-section {
+        grid-template-columns: 1fr;
+        text-align: center;
+        gap: 40px;
+    }
+    
+    .hero-title {
+        font-size: 2.5em;
+    }
+    
+    .hero-stats {
+        justify-content: center;
+    }
+    
+    .hero-visual {
+        align-items: center;
+    }
+    
+    .floating-card {
+        min-width: 250px;
+    }
+    
+    .features-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .actions-grid {
+        flex-direction: column;
+        align-items: center;
+    }
+}
+</style>
+{% endblock %}

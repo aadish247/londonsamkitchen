@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>London's Kitchen - {% block title %}{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+
+<body>
+    <nav class="navbar">
+        <div class="navbar-container">
+            <a href="/" class="navbar-brand">🚚 London's Kitchen</a>
+            <ul class="navbar-nav">
+                <li><a href="/" class="{% if request.endpoint == 'index' %}active{% endif %}">🏠 Home</a></li>
+                <li><a href="/dashboard" class="{% if request.endpoint == 'dashboard' %}active{% endif %}">📊 Dashboard</a></li>
+                <li><a href="/investments" class="{% if request.endpoint == 'investments' %}active{% endif %}">💰 Investments</a></li>
+                <li><a href="/expenses" class="{% if request.endpoint == 'expenses' %}active{% endif %}">💸 Expenses</a></li>
+                <li><a href="/sales" class="{% if request.endpoint == 'sales' %}active{% endif %}">💵 Sales</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="export-section">
+            <a href="{{ url_for('export_data') }}" class="btn btn-export">
+                📊 Export to Excel
+            </a>
+        </div>
+        {% block content %}{% endblock %}
+    </div>
+
+    <script>
+        function formatCurrency(amount) {
+            return new Intl.NumberFormat('en-GB', {
+                style: 'currency',
+                currency: 'GBP'
+            }).format(amount);
+        }
+
+        // Set default date to today for all date inputs
+        document.addEventListener('DOMContentLoaded', function () {
+            const today = new Date().toISOString().split('T')[0];
+            document.querySelectorAll('input[type="date"]').forEach(dateInput => {
+                dateInput.value = today;
+                dateInput.max = today;  // Prevent future dates
+            });
+        });
+
+        // Delete entry function
+        async function deleteEntry(type, id) {
+            if (!confirm('Are you sure you want to delete this entry? This cannot be undone.')) {
+                return;
+            }
+
+            try {
+                const response = await fetch(`/delete_${type}/${id}`, {
+                    method: 'POST'
+                });
+                
+                if (response.ok) {
+                    window.location.reload();
+                } else {
+                    alert('Error deleting entry. Please try again.');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Error deleting entry. Please try again.');
+            }
+        }
+    </script>
+    {% block scripts %}{% endblock %}
+</body>
+
+</html>
