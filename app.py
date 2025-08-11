@@ -221,149 +221,260 @@ def export_data():
         # Create a buffer to store the Excel file
         output = io.BytesIO()
 
-        # Check if we're in production environment (Railway)
-        is_production = os.environ.get('RAILWAY_ENVIRONMENT') == 'production'
+        # Import openpyxl styles for formatting
+        from openpyxl.styles import Font, PatternFill, Alignment, Border, Side
+        from openpyxl.utils.dataframe import dataframe_to_rows
+        from openpyxl.worksheet.table import Table, TableStyleInfo
 
         # Create Excel writer with formatting
         with pd.ExcelWriter(output, engine='openpyxl') as writer:
             workbook = writer.book
 
-            # Export Investments with formatting
+            # Define styles
+            header_font = Font(bold=True, color="FFFFFF")
+            header_fill = PatternFill(start_color="2F75B5", end_color="2F75B5", fill_type="solid")
+            currency_fill = PatternFill(start_color="E7E6E6", end_color="E7E6E6", fill_type="solid")
+            border = Border(left=Side(style='thin'), right=Side(style='thin'), 
+                           top=Side(style='thin'), bottom=Side(style='thin'))
+
+            # Export Investments with enhanced formatting
             investments = Investment.query.all()
             inv_data = [{
                 'Date': i.date.strftime('%Y-%m-%d'),
                 'Investor': i.investor_name,
-                'Amount': i.amount
+                'Amount': i.amount,
+                'Investment ID': f"INV-{i.id:03d}"
             } for i in investments]
 
             inv_df = pd.DataFrame(inv_data)
             inv_df.to_excel(writer, sheet_name='Investments', index=False)
 
-            # Only apply formatting in development environment to avoid potential issues
-            if not is_production:
-                # Format Investment sheet
-                inv_sheet = writer.sheets['Investments']
-                for col in ['A', 'B', 'C']:
-                    inv_sheet.column_dimensions[col].width = 15
-                inv_sheet.column_dimensions['B'].width = 12
+            # Format Investment sheet
+            inv_sheet = writer.sheets['Investments']
+            inv_sheet.column_dimensions['A'].width = 12  # Date
+            inv_sheet.column_dimensions['B'].width = 20  # Investor
+            inv_sheet.column_dimensions['C'].width = 15  # Amount
+            inv_sheet.column_dimensions['D'].width = 12  # Investment ID
 
-                # Apply currency format to Amount column
-                for row in range(2, len(inv_data) + 2):
-                    inv_sheet[f'C{row}'].number_format = '"£"#,##0.00'
+            # Apply header formatting
+            for col in ['A1', 'B1', 'C1', 'D1']:
+                cell = inv_sheet[col]
+                cell.font = header_font
+                cell.fill = header_fill
+                cell.alignment = Alignment(horizontal="center")
+                cell.border = border
 
-        # Export Expenses with formatting
-        expenses = Expense.query.all()
-        exp_data = [{
-            'Date': e.date.strftime('%Y-%m-%d'),
-            'Description': e.description,
-            'Category': e.category,
-            'Amount': e.amount
-        } for e in expenses]
+            # Apply currency format and borders
+            for row in range(2, len(inv_data) + 2):
+                inv_sheet[f'C{row}'].number_format = '"£"#,##0.00'
+                inv_sheet[f'C{row}'].fill = currency_fill
+                for col in ['A', 'B', 'C', 'D']:
+                    inv_sheet[f'{col}{row}'].border = border
 
-        exp_df = pd.DataFrame(exp_data)
-        exp_df.to_excel(writer, sheet_name='Expenses', index=False)
+            # Add table formatting
+            if inv_data:
+                inv_table = Table(displayName="InvestmentsTable", 
+                                ref=f"A1:D{len(inv_data)+1}")
+                inv_table.tableStyleInfo = TableStyleInfo(
+                    name="TableStyleMedium9", showFirstColumn=False,
+                    showLastColumn=False, showRowStripes=True, showColumnStripes=False)
+                inv_sheet.add_table(inv_table)
 
-        # Only apply formatting in development environment
-        if not is_production:
+            # Export Expenses with enhanced formatting
+            expenses = Expense.query.all()
+            exp_data = [{
+                'Date': e.date.strftime('%Y-%m-%d'),
+                'Description': e.description,
+                'Category': e.category,
+                'Amount': e.amount,
+                'Expense ID': f"EXP-{e.id:03d}"
+            } for e in expenses]
+
+            exp_df = pd.DataFrame(exp_data)
+            exp_df.to_excel(writer, sheet_name='Expenses', index=False)
+
             # Format Expense sheet
             exp_sheet = writer.sheets['Expenses']
-            exp_sheet.column_dimensions['A'].width = 12
-            exp_sheet.column_dimensions['B'].width = 30
-            exp_sheet.column_dimensions['C'].width = 15
-            exp_sheet.column_dimensions['D'].width = 12
+            exp_sheet.column_dimensions['A'].width = 12  # Date
+            exp_sheet.column_dimensions['B'].width = 35  # Description
+            exp_sheet.column_dimensions['C'].width = 20  # Category
+            exp_sheet.column_dimensions['D'].width = 15  # Amount
+            exp_sheet.column_dimensions['E'].width = 12  # Expense ID
 
-            # Apply currency format to Amount column
+            # Apply header formatting
+            for col in ['A1', 'B1', 'C1', 'D1', 'E1']:
+                cell = exp_sheet[col]
+                cell.font = header_font
+                cell.fill = header_fill
+                cell.alignment = Alignment(horizontal="center")
+                cell.border = border
+
+            # Apply currency format and borders
             for row in range(2, len(exp_data) + 2):
                 exp_sheet[f'D{row}'].number_format = '"£"#,##0.00'
+                exp_sheet[f'D{row}'].fill = currency_fill
+                for col in ['A', 'B', 'C', 'D', 'E']:
+                    exp_sheet[f'{col}{row}'].border = border
 
-        # Export Sales with formatting
-        sales = Sale.query.all()
-        sales_data = [{
-            'Date': s.date.strftime('%Y-%m-%d'),
-            'Description': s.description,
-            'Amount': s.amount
-        } for s in sales]
+            # Add table formatting
+            if exp_data:
+                exp_table = Table(displayName="ExpensesTable", 
+                                ref=f"A1:E{len(exp_data)+1}")
+                exp_table.tableStyleInfo = TableStyleInfo(
+                    name="TableStyleMedium9", showFirstColumn=False,
+                    showLastColumn=False, showRowStripes=True, showColumnStripes=False)
+                exp_sheet.add_table(exp_table)
 
-        sales_df = pd.DataFrame(sales_data)
-        sales_df.to_excel(writer, sheet_name='Sales', index=False)
+            # Export Sales with enhanced formatting
+            sales = Sale.query.all()
+            sales_data = [{
+                'Date': s.date.strftime('%Y-%m-%d'),
+                'Description': s.description,
+                'Amount': s.amount,
+                'Sale ID': f"SAL-{s.id:03d}"
+            } for s in sales]
 
-        # Only apply formatting in development environment
-        if not is_production:
+            sales_df = pd.DataFrame(sales_data)
+            sales_df.to_excel(writer, sheet_name='Sales', index=False)
+
             # Format Sales sheet
             sales_sheet = writer.sheets['Sales']
-            sales_sheet.column_dimensions['A'].width = 12
-            sales_sheet.column_dimensions['B'].width = 30
-            sales_sheet.column_dimensions['C'].width = 12
+            sales_sheet.column_dimensions['A'].width = 12  # Date
+            sales_sheet.column_dimensions['B'].width = 35  # Description
+            sales_sheet.column_dimensions['C'].width = 15  # Amount
+            sales_sheet.column_dimensions['D'].width = 12  # Sale ID
 
-            # Apply currency format to Amount column
+            # Apply header formatting
+            for col in ['A1', 'B1', 'C1', 'D1']:
+                cell = sales_sheet[col]
+                cell.font = header_font
+                cell.fill = header_fill
+                cell.alignment = Alignment(horizontal="center")
+                cell.border = border
+
+            # Apply currency format and borders
             for row in range(2, len(sales_data) + 2):
                 sales_sheet[f'C{row}'].number_format = '"£"#,##0.00'
+                sales_sheet[f'C{row}'].fill = currency_fill
+                for col in ['A', 'B', 'C', 'D']:
+                    sales_sheet[f'{col}{row}'].border = border
 
-        # Create enhanced Summary sheet
-        total_investment = sum(i.amount for i in investments)
-        total_expenses = sum(e.amount for e in expenses)
-        total_sales = sum(s.amount for s in sales)
-        net_profit = total_sales - total_expenses
+            # Add table formatting
+            if sales_data:
+                sales_table = Table(displayName="SalesTable", 
+                                ref=f"A1:D{len(sales_data)+1}")
+                sales_table.tableStyleInfo = TableStyleInfo(
+                    name="TableStyleMedium9", showFirstColumn=False,
+                    showLastColumn=False, showRowStripes=True, showColumnStripes=False)
+                sales_sheet.add_table(sales_table)
 
-        # Calculate investment shares
-        shree_investment = sum(
-            i.amount for i in investments if i.investor_name == 'Shree')
-        adwait_investment = sum(
-            i.amount for i in investments if i.investor_name == 'Adwait')
+            # Create comprehensive Summary sheet
+            total_investment = sum(i.amount for i in investments)
+            total_expenses = sum(e.amount for e in expenses)
+            total_sales = sum(s.amount for s in sales)
+            net_profit = total_sales - total_expenses
 
-        summary_data = [
-            ['London\'s Kitchen Financial Summary', ''],
-            ['', ''],
-            ['Summary Overview', ''],
-            ['Total Investment', total_investment],
-            ['Total Expenses', total_expenses],
-            ['Total Sales', total_sales],
-            ['Net Profit/Loss', net_profit],
-            ['', ''],
-            ['Investment Breakdown', ''],
-            ['Adwait\'s Investment', adwait_investment],
-            ['Shree\'s Investment', shree_investment],
-            ['', ''],
-            ['Profit Sharing (Based on Investment)', ''],
-            ['Adwait\'s Share %',
-                f"{(adwait_investment/total_investment*100):.1f}%" if total_investment > 0 else "0%"],
-            ['Shree\'s Share %',
-                f"{(shree_investment/total_investment*100):.1f}%" if total_investment > 0 else "0%"],
-            ['', ''],
-            ['Adwait\'s Profit Share',
-                f"£{net_profit * (adwait_investment/total_investment):,.2f}" if total_investment > 0 else "£0.00"],
-            ['Shree\'s Profit Share',
-                f"£{net_profit * (shree_investment/total_investment):,.2f}" if total_investment > 0 else "£0.00"]
-        ]
+            # Calculate investment shares
+            shree_investment = sum(
+                i.amount for i in investments if i.investor_name == 'Shree')
+            adwait_investment = sum(
+                i.amount for i in investments if i.investor_name == 'Adwait')
 
-        summary_df = pd.DataFrame(summary_data, columns=['Category', 'Amount'])
-        summary_df.to_excel(writer, sheet_name='Summary', index=False)
+            # Calculate category breakdown for expenses
+            expense_categories = {}
+            for expense in expenses:
+                if expense.category in expense_categories:
+                    expense_categories[expense.category] += expense.amount
+                else:
+                    expense_categories[expense.category] = expense.amount
 
-        # Only apply formatting in development environment
-        if not is_production:
-            # Format Summary sheet
-            summary_sheet = writer.sheets['Summary']
-            summary_sheet.column_dimensions['A'].width = 35
-            summary_sheet.column_dimensions['B'].width = 20
+            # Create comprehensive summary data
+            summary_data = [
+                ['London\'s Kitchen - Complete Financial Report', ''],
+                [f'Generated on: {datetime.now().strftime("%d/%m/%Y %H:%M")}', ''],
+                ['', ''],
+                ['📊 BUSINESS OVERVIEW', ''],
+                ['Total Investments', total_investment],
+                ['Total Expenses', total_expenses],
+                ['Total Sales Revenue', total_sales],
+                ['Net Profit/Loss', net_profit],
+                ['Profit Margin', f"{(net_profit/total_sales*100):.1f}%" if total_sales > 0 else "0.0%"],
+                ['', ''],
+                ['💰 INVESTMENT ANALYSIS', ''],
+                ['Total Number of Investments', len(investments)],
+                ['Average Investment Amount', total_investment/len(investments) if investments else 0],
+                ['Adwait\'s Total Investment', adwait_investment],
+                ['Shree\'s Total Investment', shree_investment],
+                ['Adwait\'s Investment %', f"{(adwait_investment/total_investment*100):.1f}%" if total_investment > 0 else "0.0%"],
+                ['Shree\'s Investment %', f"{(shree_investment/total_investment*100):.1f}%" if total_investment > 0 else "0.0%"],
+                ['', ''],
+                ['💸 EXPENSE ANALYSIS', ''],
+                ['Total Number of Expenses', len(expenses)],
+                ['Average Expense Amount', total_expenses/len(expenses) if expenses else 0],
+                ['', ''],
+                ['Expense Categories Breakdown:', ''],
+            ]
 
-            # Apply formatting to Summary sheet
-            from openpyxl.styles import Font
-            summary_sheet['A1'].font = Font(bold=True, size=14)
-            summary_sheet['A3'].font = Font(bold=True, size=12)
-            summary_sheet['A9'].font = Font(bold=True, size=12)
-            summary_sheet['A13'].font = Font(bold=True, size=12)
+            # Add expense categories
+            for category, amount in sorted(expense_categories.items(), key=lambda x: x[1], reverse=True):
+                summary_data.append([f"  {category}", amount])
 
-            # Apply currency format to amount columns
-            currency_rows = [4, 5, 6, 7, 10, 11, 17, 18]
-            for row in currency_rows:
-                summary_sheet[f'B{row}'].number_format = '"£"#,##0.00'
+            # Continue with sales analysis
+            summary_data.extend([
+                ['', ''],
+                ['💵 SALES ANALYSIS', ''],
+                ['Total Number of Sales', len(sales)],
+                ['Average Sale Amount', total_sales/len(sales) if sales else 0],
+                ['', ''],
+                ['📈 PROFIT DISTRIBUTION', ''],
+                ['Available for Distribution', net_profit],
+                ['Adwait\'s Profit Share', f"£{net_profit * (adwait_investment/total_investment):,.2f}" if total_investment > 0 else "£0.00"],
+                ['Shree\'s Profit Share', f"£{net_profit * (shree_investment/total_investment):,.2f}" if total_investment > 0 else "£0.00"],
+                ['', ''],
+                ['🔍 DATA SUMMARY', ''],
+                ['Total Records in System', len(investments) + len(expenses) + len(sales)],
+                ['Data Export Date', datetime.now().strftime('%d/%m/%Y')],
+                ['Data Export Time', datetime.now().strftime('%H:%M:%S')],
+            ])
+
+            summary_df = pd.DataFrame(summary_data, columns=['Category', 'Amount'])
+            summary_df.to_excel(writer, sheet_name='Complete Summary', index=False)
+
+            # Format Complete Summary sheet
+            summary_sheet = writer.sheets['Complete Summary']
+            summary_sheet.column_dimensions['A'].width = 40
+            summary_sheet.column_dimensions['B'].width = 25
+
+            # Apply enhanced formatting to Summary sheet
+            summary_sheet['A1'].font = Font(bold=True, size=16, color="FFFFFF")
+            summary_sheet['A1'].fill = PatternFill(start_color="1F4E79", end_color="1F4E79", fill_type="solid")
+            summary_sheet['A2'].font = Font(italic=True, size=10)
+
+            # Apply section headers formatting
+            section_headers = ['A4', 'A11', 'A20', 'A26', 'A34']
+            for header in section_headers:
+                cell = summary_sheet[header]
+                cell.font = Font(bold=True, size=12, color="FFFFFF")
+                cell.fill = PatternFill(start_color="2F75B5", end_color="2F75B5", fill_type="solid")
+
+            # Apply currency format and borders
+            for row in range(1, len(summary_data) + 1):
+                summary_sheet[f'A{row}'].border = border
+                summary_sheet[f'B{row}'].border = border
+                
+                # Currency formatting for amount cells
+                if row in [5, 6, 7, 8, 13, 14, 15, 16, 22, 23, 25, 26, 27, 28, 29, 35, 36, 37, 38]:
+                    summary_sheet[f'B{row}'].number_format = '"£"#,##0.00'
+                    summary_sheet[f'B{row}'].fill = currency_fill
+                elif row in [9, 15, 16, 30]:
+                    summary_sheet[f'B{row}'].number_format = '0.0%'
 
         output.seek(0)
         return send_file(
             output,
             mimetype='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
             as_attachment=True,
-            download_name=f'London_Kitchen_Financial_Report_{datetime.now().strftime("%Y-%m-%d")}.xlsx'
+            download_name=f'London_Kitchen_Complete_Report_{datetime.now().strftime("%Y-%m-%d_%H-%M")}.xlsx'
         )
     except Exception as e:
         app.logger.error(f"Error in export_data: {str(e)}")
