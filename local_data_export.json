@@ -1,0 +1,388 @@
+{
+  "exported_at": "2025-08-11T17:37:26.043388",
+  "investments": [
+    {
+      "investor_name": "Adwait",
+      "amount": 5184.0,
+      "date": "2025-08-11 00:00:00.000000"
+    },
+    {
+      "investor_name": "Shree",
+      "amount": 4500.0,
+      "date": "2025-08-11 00:00:00.000000"
+    },
+    {
+      "investor_name": "Shree",
+      "amount": 2000.0,
+      "date": "2025-08-11 00:00:00.000000"
+    },
+    {
+      "investor_name": "Shree",
+      "amount": 1728.0,
+      "date": "2025-08-11 00:00:00.000000"
+    }
+  ],
+  "expenses": [
+    {
+      "description": "Insurance premium (May 2025)",
+      "amount": 32.0,
+      "category": "Setup Expense",
+      "date": "2025-05-01 00:00:00.000000"
+    },
+    {
+      "description": "Popat Stores \u2013 kitchen supplies",
+      "amount": 58.44,
+      "category": "Monthly Expense",
+      "date": "2025-05-11 00:00:00.000000"
+    },
+    {
+      "description": "Popat Stores \u2013 kitchen supplies",
+      "amount": 37.43,
+      "category": "Monthly Expense",
+      "date": "2025-05-18 00:00:00.000000"
+    },
+    {
+      "description": "Bestway Wholesale \u2013 bulk stock",
+      "amount": 367.41,
+      "category": "Monthly Expense",
+      "date": "2025-05-19 00:00:00.000000"
+    },
+    {
+      "description": "Costco \u2013 bulk purchase",
+      "amount": 367.41,
+      "category": "Monthly Expense",
+      "date": "2025-05-19 00:00:00.000000"
+    },
+    {
+      "description": "IKEA \u2013 kitchen equipment",
+      "amount": 110.25,
+      "category": "Monthly Expense",
+      "date": "2025-05-20 00:00:00.000000"
+    },
+    {
+      "description": "Neefa Cash & Carry \u2013 supplies",
+      "amount": 48.78,
+      "category": "Monthly Expense",
+      "date": "2025-05-20 00:00:00.000000"
+    },
+    {
+      "description": "ASDA \u2013 groceries",
+      "amount": 20.4,
+      "category": "Monthly Expense",
+      "date": "2025-05-21 00:00:00.000000"
+    },
+    {
+      "description": "Popat Stores \u2013 spices/supplies",
+      "amount": 9.99,
+      "category": "Monthly Expense",
+      "date": "2025-05-23 00:00:00.000000"
+    },
+    {
+      "description": "Bestway Wholesale \u2013 bulk stock",
+      "amount": 346.25,
+      "category": "Monthly Expense",
+      "date": "2025-05-23 00:00:00.000000"
+    },
+    {
+      "description": "Costco \u2013 bulk purchase",
+      "amount": 176.96,
+      "category": "Monthly Expense",
+      "date": "2025-05-25 00:00:00.000000"
+    },
+    {
+      "description": "Argos \u2013 equipment",
+      "amount": 166.1,
+      "category": "Monthly Expense",
+      "date": "2025-05-25 00:00:00.000000"
+    },
+    {
+      "description": "Primark \u2013 clothing/uniform",
+      "amount": 42.65,
+      "category": "Monthly Expense",
+      "date": "2025-05-25 00:00:00.000000"
+    },
+    {
+      "description": "Wembley \u2013 parking/license fee",
+      "amount": 30.0,
+      "category": "Monthly Expense",
+      "date": "2025-05-25 00:00:00.000000"
+    },
+    {
+      "description": "Popat Stores \u2013 supplies",
+      "amount": 20.4,
+      "category": "Monthly Expense",
+      "date": "2025-05-26 00:00:00.000000"
+    },
+    {
+      "description": "Man Kitchen \u2013 kitchen item",
+      "amount": 3.0,
+      "category": "Monthly Expense",
+      "date": "2025-05-26 00:00:00.000000"
+    },
+    {
+      "description": "Fruits Fresh \u2013 produce",
+      "amount": 30.42,
+      "category": "Monthly Expense",
+      "date": "2025-05-26 00:00:00.000000"
+    },
+    {
+      "description": "JK Home Decor \u2013 d\u00e9cor items",
+      "amount": 72.0,
+      "category": "Monthly Expense",
+      "date": "2025-05-27 00:00:00.000000"
+    },
+    {
+      "description": "JK Home Decor \u2013 d\u00e9cor items",
+      "amount": 11.0,
+      "category": "Monthly Expense",
+      "date": "2025-05-27 00:00:00.000000"
+    },
+    {
+      "description": "Poundland \u2013 miscellaneous",
+      "amount": 3.0,
+      "category": "Monthly Expense",
+      "date": "2025-05-27 00:00:00.000000"
+    },
+    {
+      "description": "Local shop (Abizer?) \u2013 misc.",
+      "amount": 4.0,
+      "category": "Monthly Expense",
+      "date": "2025-05-27 00:00:00.000000"
+    },
+    {
+      "description": "Poundland \u2013 miscellaneous",
+      "amount": 8.8,
+      "category": "Monthly Expense",
+      "date": "2025-05-27 00:00:00.000000"
+    },
+    {
+      "description": "A&A Goods \u2013 supplies",
+      "amount": 11.0,
+      "category": "Monthly Expense",
+      "date": "2025-05-27 00:00:00.000000"
+    },
+    {
+      "description": "Barway Pizza \u2013 food expense",
+      "amount": 1.65,
+      "category": "Monthly Expense",
+      "date": "2025-05-27 00:00:00.000000"
+    },
+    {
+      "description": "ASDA \u2013 groceries",
+      "amount": 14.86,
+      "category": "Monthly Expense",
+      "date": "2025-05-28 00:00:00.000000"
+    },
+    {
+      "description": "\u201cForever\u201d Lifestyle \u2013 product",
+      "amount": 55.5,
+      "category": "Monthly Expense",
+      "date": "2025-05-29 00:00:00.000000"
+    },
+    {
+      "description": "AMA Food Store \u2013 supplies",
+      "amount": 7.0,
+      "category": "Monthly Expense",
+      "date": "2025-05-29 00:00:00.000000"
+    },
+    {
+      "description": "Wembley Park \u2013 parking fee",
+      "amount": 40.5,
+      "category": "Monthly Expense",
+      "date": "2025-05-29 00:00:00.000000"
+    },
+    {
+      "description": "ASDA \u2013 groceries",
+      "amount": 40.0,
+      "category": "Monthly Expense",
+      "date": "2025-05-29 00:00:00.000000"
+    },
+    {
+      "description": "Electric wire connector expense",
+      "amount": 270.0,
+      "category": "Monthly Expense",
+      "date": "2025-05-29 00:00:00.000000"
+    },
+    {
+      "description": "Costco \u2013 bulk purchase",
+      "amount": 86.33,
+      "category": "Monthly Expense",
+      "date": "2025-05-30 00:00:00.000000"
+    },
+    {
+      "description": "Adwait salary for May 2025",
+      "amount": 2000.0,
+      "category": "Salary",
+      "date": "2025-05-31 00:00:00.000000"
+    },
+    {
+      "description": "Insurance premium (June 2025)",
+      "amount": 32.0,
+      "category": "Setup Expense",
+      "date": "2025-06-01 00:00:00.000000"
+    },
+    {
+      "description": "Wing Yip \u2013 food supplies",
+      "amount": 172.7,
+      "category": "Monthly Expense",
+      "date": "2025-06-02 00:00:00.000000"
+    },
+    {
+      "description": "Wing Yip \u2013 additional supplies",
+      "amount": 35.95,
+      "category": "Monthly Expense",
+      "date": "2025-06-02 00:00:00.000000"
+    },
+    {
+      "description": "Bestway Wholesale \u2013 bulk stock",
+      "amount": 101.34,
+      "category": "Monthly Expense",
+      "date": "2025-06-02 00:00:00.000000"
+    },
+    {
+      "description": "Bestway Wholesale \u2013 bulk stock",
+      "amount": 101.13,
+      "category": "Monthly Expense",
+      "date": "2025-06-02 00:00:00.000000"
+    },
+    {
+      "description": "Stocking expense",
+      "amount": 25.0,
+      "category": "Monthly Expense",
+      "date": "2025-06-04 00:00:00.000000"
+    },
+    {
+      "description": "Stocking expense",
+      "amount": 5.0,
+      "category": "Monthly Expense",
+      "date": "2025-06-04 00:00:00.000000"
+    },
+    {
+      "description": "ASDA \u2013 groceries/supplies",
+      "amount": 101.13,
+      "category": "Monthly Expense",
+      "date": "2025-06-08 00:00:00.000000"
+    },
+    {
+      "description": "Rent (truck pitch/garage)",
+      "amount": 450.0,
+      "category": "Monthly Expense",
+      "date": "2025-06-10 00:00:00.000000"
+    },
+    {
+      "description": "Stocking expense",
+      "amount": 5.0,
+      "category": "Monthly Expense",
+      "date": "2025-06-10 00:00:00.000000"
+    },
+    {
+      "description": "Wing Yip \u2013 food supplies",
+      "amount": 63.85,
+      "category": "Monthly Expense",
+      "date": "2025-06-11 00:00:00.000000"
+    },
+    {
+      "description": "Amazon \u2013 equipment/supplies",
+      "amount": 33.87,
+      "category": "Monthly Expense",
+      "date": "2025-06-22 00:00:00.000000"
+    },
+    {
+      "description": "Bestway Wholesale \u2013 bulk stock",
+      "amount": 70.97,
+      "category": "Monthly Expense",
+      "date": "2025-06-23 00:00:00.000000"
+    },
+    {
+      "description": "Wing Yip \u2013 food supplies",
+      "amount": 80.8,
+      "category": "Monthly Expense",
+      "date": "2025-06-23 00:00:00.000000"
+    },
+    {
+      "description": "Rent for June 2025",
+      "amount": 400.0,
+      "category": "Rent",
+      "date": "2025-06-30 00:00:00.000000"
+    },
+    {
+      "description": "Adwait salary for June 2025",
+      "amount": 2000.0,
+      "category": "Salary",
+      "date": "2025-06-30 00:00:00.000000"
+    },
+    {
+      "description": "Insurance premium (July 2025 prepaid)",
+      "amount": 32.0,
+      "category": "Setup Expense",
+      "date": "2025-07-01 00:00:00.000000"
+    },
+    {
+      "description": "Rent for July 2025",
+      "amount": 400.0,
+      "category": "Rent",
+      "date": "2025-07-31 00:00:00.000000"
+    },
+    {
+      "description": "Food Truck (second-hand vehicle)",
+      "amount": 2500.0,
+      "category": "Setup Expense",
+      "date": "2025-08-11 00:00:00.000000"
+    },
+    {
+      "description": "Towing for Truck",
+      "amount": 160.0,
+      "category": "Setup Expense",
+      "date": "2025-08-11 00:00:00.000000"
+    },
+    {
+      "description": "Kitchen Supplies (Costco \u201cGift Bag\u201d)",
+      "amount": 32.0,
+      "category": "Setup Expense",
+      "date": "2025-08-11 00:00:00.000000"
+    },
+    {
+      "description": "Decor \u2013 Home d\u00e9cor items",
+      "amount": 55.0,
+      "category": "Setup Expense",
+      "date": "2025-08-11 00:00:00.000000"
+    },
+    {
+      "description": "Electrical Appliances (IKEA)",
+      "amount": 110.0,
+      "category": "Setup Expense",
+      "date": "2025-08-11 00:00:00.000000"
+    },
+    {
+      "description": "Decor \u2013 GK Home Decor store",
+      "amount": 85.0,
+      "category": "Setup Expense",
+      "date": "2025-08-11 00:00:00.000000"
+    },
+    {
+      "description": "Trailer Jack (Halfords)",
+      "amount": 121.0,
+      "category": "Setup Expense",
+      "date": "2025-08-11 00:00:00.000000"
+    },
+    {
+      "description": "Parking Permit (Wembley)",
+      "amount": 30.0,
+      "category": "Setup Expense",
+      "date": "2025-08-11 00:00:00.000000"
+    },
+    {
+      "description": "Plumbing Work for Truck",
+      "amount": 300.0,
+      "category": "Setup Expense",
+      "date": "2025-08-11 00:00:00.000000"
+    },
+    {
+      "description": "Refrigerators (3 units)",
+      "amount": 494.0,
+      "category": "Setup Expense",
+      "date": "2025-08-11 00:00:00.000000"
+    }
+  ],
+  "sales": []
+}
